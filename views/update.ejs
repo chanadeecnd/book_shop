@@ -1,0 +1,48 @@
+<%-include('./partials/adminHeader')%>
+<main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4">
+    <div class="d-flex justify-content-around align-items-center mb-2 mt-5" style="height: 100vh;">
+        <img src="/uploads/<%=doc.image%>" alt="" width="28%" height="38%"  class="img-thumbnail">
+        <form action="/update/product" method="post" enctype="multipart/form-data" style="width: 50%;">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="name" id="floatingName" placeholder="Book Name" value="<%=doc.name%>">
+                <label for="floatingName">Book name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" name="price" id="floatingPrice" placeholder="Price" value="<%=doc.price%>">
+                <label for="floatingPrice">Price</label>
+            </div>
+            <input type="text" value="<%=doc._id%>" name="id" hidden>
+            <input type="number" name="productId" value="<%=doc.ProductId%>" hidden>
+            <input type="text" value="<%=doc.image%>" name="image" hidden>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">image</label>
+                <input class="form-control" type="file" id="formFile" name="newImage" />
+              </div>
+            <select class="form-select mb-3" aria-label="Default select example" name="category">
+                <option >Open this select menu</option>
+                <option value="Business" <%= doc.category === 'Business' ? 'selected' : '' %>>Business</option>
+                <option value="Computers"<%= doc.category === 'Computers' ? 'selected' : '' %>>Computers</option>
+                <option value="History"<%= doc.category === 'History' ? 'selected' : '' %>>History</option>
+                <option value="Horror"<%= doc.category === 'Horror' ? 'selected' : '' %>>Horror</option>
+                <option value="Education"<%= doc.category === 'Education' ? 'selected' : '' %>>Education</option>
+                <option value="Romance"<%= doc.category === 'Romance' ? 'selected' : '' %>>Romance</option>
+                
+            </select>
+           
+            <a href="/admin" class="btn btn-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update</button>
+           
+        </form>
+    </div>
+</main>
+<script>
+    const fileInput = document.querySelector('input[type="file"]');
+    const myImage = new File(['imageData'], '<%=doc.image%>', {
+        type: 'image/jpeg',
+        lastModified: new Date(),
+    });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(myImage);
+    fileInput.files = dataTransfer.files;
+</script>
+<%-include('./partials/adminFooter')%>

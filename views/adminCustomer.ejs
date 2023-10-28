@@ -8,6 +8,7 @@
                     <thead>
                         <tr>
                             <th>UserId</th>
+                            <th>GoogleId</th>
                             <th>Email</th>
                             <th>Date</th>
                             <th></th>
@@ -17,7 +18,8 @@
                         <%doc.forEach(data=>{%>
                         <tr>
                             <td><%=data.UserId%></td>
-                            <td><%=data.username%>></td>
+                            <td><%=data.googleId%></td>
+                            <td><%=data.username%></td>
                             <td><%=data.date%></td>
                             <td><a onclick="return confirm('Are you sure your want to delete <%=data.username%> ?')" href="/delete/user/<%=data._id%>" class="confirmation"><i class="fa-solid fa-trash-can" style="color: #f13b57;"></i></a></td>
                         </tr>

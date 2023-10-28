@@ -14,19 +14,19 @@
                                 <div class="modal-body">
                                     <form action="/insert" method="post" enctype="multipart/form-data">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" name="name" id="floatingName" placeholder="Book Name">
+                                            <input type="text" class="form-control" name="name" id="floatingName" placeholder="Book Name" required>
                                             <label for="floatingName">Book name</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input type="number" class="form-control" name="price" id="floatingPrice" placeholder="Price">
+                                            <input type="number" class="form-control" name="price" id="floatingPrice" placeholder="Price" required>
                                             <label for="floatingPrice">Price</label>
                                         </div>
                                         <div class="mb-3">
                                             <label for="formFile" class="form-label">image</label>
-                                            <input class="form-control" type="file" id="formFile" name="image">
+                                            <input class="form-control" type="file" id="formFile" name="image" required>
                                           </div>
-                                        <select class="form-select" aria-label="Default select example" name="category">
-                                            <option selected>Open this select menu</option>
+                                        <select class="form-select" aria-label="Default select example" name="category" required>
+                                            <option value= "notSelect" selected>Open this select menu</option>
                                             <option value="Business">Business</option>
                                             <option value="Computers">Computers</option>
                                             <option value="History">History</option>

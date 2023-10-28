@@ -35,7 +35,7 @@
         </form>
     </div>
 </main>
-<script>
+<!-- <script>
     const fileInput = document.querySelector('input[type="file"]');
     const myImage = new File(['imageData'], '<%=doc.image%>', {
         type: 'image/jpeg',
@@ -44,5 +44,5 @@
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(myImage);
     fileInput.files = dataTransfer.files;
-</script>
+</script> -->
 <%-include('./partials/adminFooter')%>

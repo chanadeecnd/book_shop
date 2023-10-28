@@ -8,18 +8,20 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate')
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const key = 'fso324ds@fdsf!fczvzsa'
-let genKey = ''
+const fs = require('fs');
+const key = 'fso324ds@fdsf!fczvzsa';
+let genKey = '';
+let imgArr = [];
+
 const storage = multer.diskStorage({
     destination: (req,file,cb)=>{
-        cb(null,'./public/uploads')
+        cb(null,'./public/uploads');
     },
     filename:(req,file,cb)=>{
-        generateKey(6)
-        let name = `${genKey}${Date.now()}.jpg`
-        cb(null,name)
+        generateKey(6);
+        let name = `${genKey}${Date.now()}.jpg`;
+        cb(null,name);
     }
-
 })
 
 const upload = multer({storage:storage})
@@ -70,10 +72,14 @@ passport.serializeUser(function(user, done) {
     done(null, user.id);
   });
   
-passport.deserializeUser(function(id, done) {
-User.findById(id, function (err, user) {
-    done(err, user);
-    });
+  passport.deserializeUser(function (id, done) {
+    User.findById(id)
+        .then(user => {
+            done(null, user)
+        })
+        .catch(err => {
+            done(err, null)
+        })
 });
 // passport.serializeUser(User.serializeUser((user,done)=>{
 //     done(null,user)
@@ -85,18 +91,40 @@ passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     callbackURL: "http://localhost:3000/auth/google/home",
-    userProfileURL:"https://www.googleapis.com/oauth2/v3/userinfo"
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
-  function(accessToken, refreshToken, profile, cb) {
-    console.log(profile)
-    User.findOrCreate({ googleId: profile.id })
-        .then((user)=>{
-            if(!user){
-                user
-            }
+  function (accessToken, refreshToken, profile, cb) {
+    // console.log(profile);
+    let newUserId
+    User.findOne({},{},{sort:{UserId:-1}})
+        .then(user=>{
+            console.log(user)
+            if(user == null){
+                newUserId = 1
+            }else{newUserId = genID(user.UserId)}
+            }).then(()=>{
+            User.findOne({ googleId: profile.id })
+            .then(user=>{  
+                console.log(`NewId : ${newUserId}`)
+                if (!user) {
+                    user = new User({
+                    username: profile.emails[0].value,
+                    googleId: profile.id,
+                    UserId: newUserId,
+                    date: getDate(),
+                    });
+                    user.save().then(user=>{
+                        return cb(null,user)
+                    }).catch(err=>cb(err))
+                } else {
+                return cb(null, user);
+                }
+            })
         })
   }
 ));
+
+
 
 function getDate() {
     const d = new Date();
@@ -131,7 +159,7 @@ function generateKey() {
 }
 
 function genID(id){
-    if(id === undefined){
+    if(id === undefined || id === null){
         id = 0;
     }
     const newId = id + 1;
@@ -160,7 +188,7 @@ app.get('/',(req,res)=>{
 app.get('/home',(req,res)=>{
     Product.find()
         .then(data=>{
-            console.log(data)
+            // console.log(data)
             let doc = []
             data.forEach(d=>{
                 const newDoc = {
@@ -171,7 +199,7 @@ app.get('/home',(req,res)=>{
                 }
                 doc.push(newDoc)
             })
-            console.log(doc)
+            // console.log(doc)
             res.render('home',{doc:doc})
         })
     
@@ -218,7 +246,7 @@ app.get('/customer',(req,res)=>{
     if(checkAdmin){
         User.find()
             .then(data=>{
-                console.log(data)
+                // console.log(data)
                 res.render('adminCustomer',{doc:data})
             })
         
@@ -248,7 +276,7 @@ app.get('/delete/product/:id',(req,res)=>{
 })
 
 app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] }));
+  passport.authenticate('google', { scope: ['profile',"email"] }));
 
 app.get('/auth/google/home', 
   passport.authenticate('google', { failureRedirect: '/login' }),
@@ -260,7 +288,14 @@ app.get('/auth/google/home',
 
 app.post('/update/product',upload.single('newImage'),(req,res)=>{
     const {name, price, category, image, ProductId, id} = req.body
-    const img = req.file.filename
+    let img
+    if(req.file){
+        img = req.file.filename
+    }else{img = image}
+    // imgArr.push(img)
+    // console.log(imgArr)
+    // fs.rename(`/uploads/${imgArr[0]}`,`/uploads/${imgArr[1]}`,(err)=>{
+        
     Product.findByIdAndUpdate(id,{
         name:name,
         price:price,
@@ -271,13 +306,10 @@ app.post('/update/product',upload.single('newImage'),(req,res)=>{
         console.log(`Updated product : ${data}`)
         res.redirect('/admin')
     }).catch(err=>console.log(err))
-    
-
-    console.log(req.body.name)
-    console.log(`new img : ${req.file.filename}`)
-
-
-})
+});
+    // console.log(req.body.name)
+    // console.log(`new img : ${req.file.filename}`)
+// })
 
 //update product
 app.post('/update',(req,res)=>{
@@ -285,6 +317,8 @@ app.post('/update',(req,res)=>{
     Product.findById(findId)
         .then(data=>{
             // console.log(data)
+            imgArr.push(data.image)
+            console.log(`Old image : ${imgArr}`)
             res.render('update',{doc:data})
         })
         .catch(err=>console.log(err))
@@ -342,7 +376,10 @@ app.post('/register',(req,res)=>{
 
 //insert product
 app.post('/insert',upload.single('image'),(req,res)=>{
-    const {name,price,category} = req.body;
+    let {name,price,category} = req.body;
+    if(category === 'notSelect'){
+        category = 'Book'
+    }
     const img = req.file.filename;
     Product.findOne({},{},{sort:{ProductId:-1}})
         .then(data=>{

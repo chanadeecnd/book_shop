@@ -13,7 +13,8 @@ const { url } = require('inspector');
 const key = 'fso324ds@fdsf!fczvzsa';
 let genKey = '';
 let imgArr = [];
-
+let client_id = '5280873552-q9kuuotqgs3e2m10kdpmvegvmip6uksd.apps.googleusercontent.com'
+let client_secret = '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'
 const storage = multer.diskStorage({
     destination: (req,file,cb)=>{
         cb(null,'./public/uploads');
@@ -32,7 +33,7 @@ app.set('view engine','ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(session({
-    secret:process.env.SECRET,
+    secret:process.env.SECRET || 'mysecret',
     resave:false,
     saveUninitialized:false
 }));

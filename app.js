@@ -1,4 +1,4 @@
-// require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -13,8 +13,9 @@ const { url } = require('inspector');
 const key = 'fso324ds@fdsf!fczvzsa';
 let genKey = '';
 let imgArr = [];
-let client_id = '5280873552-q9kuuotqgs3e2m10kdpmvegvmip6uksd.apps.googleusercontent.com'
-let client_secret = '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'
+const client_id = process.env.CLIENT_ID
+const client_secret = process.env.CLIENT_SECRET
+const mysecrets = process.env.SECRET
 const storage = multer.diskStorage({
     destination: (req,file,cb)=>{
         cb(null,'./public/uploads');
@@ -28,12 +29,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage:storage})
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(session({
-    secret:'mysecret',
+    secret:mysecrets,
     resave:false,
     saveUninitialized:false
 }));

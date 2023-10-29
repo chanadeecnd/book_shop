@@ -22,10 +22,8 @@ code .
 npm start
 ```
 
-
-
-
-## ระบบหลังบ้าน
+## Admin
+[Admin page](https://nodejs-readdi.onrender.com/admin)
 ```bash
 username : admin
 password : 0000

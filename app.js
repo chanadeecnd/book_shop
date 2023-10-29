@@ -10,6 +10,7 @@ const findOrCreate = require('mongoose-findorcreate')
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const fs = require('fs');
+const morgan = require('morgan')
 const { url } = require('inspector');
 const key = 'fso324ds@fdsf!fczvzsa';
 let genKey = '';
@@ -34,6 +35,7 @@ const port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(morgan('combined'))
 app.use(session({
     store:new MemoryStore({
         checkPeriod:86400000
@@ -433,5 +435,5 @@ app.post('/insert',upload.single('image'),(req,res)=>{
 })
 
 app.listen(port,()=>{
-    console.log('Server is running ....');
+    console.log(`Server is running on port ${port}`);
 });

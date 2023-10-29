@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
         cb(null,name);
     }
 })
-
+let ipConnect
 const upload = multer({storage:storage})
 const app = express();
 const port = process.env.PORT || 3000;
@@ -92,11 +92,11 @@ passport.serializeUser(function(user, done) {
             done(err, null)
         })
 });
-
+//http://localhost:3000/auth/google/home
 passport.use(new GoogleStrategy({
     clientID:client_id,
     clientSecret:client_secret,
-    callbackURL: "http://localhost:3000/auth/google/home" || "https://nodejs-readdi.onrender.com/auth/google/home",
+    callbackURL: "https://nodejs-readdi.onrender.com/auth/google/home",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function (accessToken, refreshToken, profile, cb) {
@@ -189,6 +189,8 @@ function notUser(input){
 
 //default user login
 app.get('/',(req,res)=>{
+    ipConnect = req.ip
+    console.log(ipConnect)
     let user
     if(req.isAuthenticated()){
         user = req.user || req.profile

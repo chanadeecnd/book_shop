@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage:storage})
 const app = express();
-
+const port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
@@ -424,6 +424,6 @@ app.post('/insert',upload.single('image'),(req,res)=>{
     
 })
 
-app.listen(process.env.PORT,()=>{
+app.listen(port,()=>{
     console.log('Server is running ....');
 });

@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -28,12 +28,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage:storage})
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 app.set('view engine','ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(session({
-    secret:process.env.SECRET || 'mysecret',
+    secret:'mysecret',
     resave:false,
     saveUninitialized:false
 }));
@@ -89,8 +89,8 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.CLIENT_ID || client_id,
-    clientSecret: process.env.CLIENT_SECRET || client_secret,
+    clientID:client_id,
+    clientSecret:client_secret,
     callbackURL: "http://localhost:3000/auth/google/home",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },

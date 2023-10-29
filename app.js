@@ -18,6 +18,7 @@ let imgArr = [];
 const client_id = process.env.CLIENT_ID
 const client_secret = process.env.CLIENT_SECRET
 const mysecrets = process.env.SECRET
+let chkPortConnect = "http://localhost:3000/auth/google/home"
 const storage = multer.diskStorage({
     destination: (req,file,cb)=>{
         cb(null,'./public/uploads');
@@ -28,7 +29,7 @@ const storage = multer.diskStorage({
         cb(null,name);
     }
 })
-let ipConnect
+
 const upload = multer({storage:storage})
 const app = express();
 const port = process.env.PORT || 3000;
@@ -98,7 +99,7 @@ passport.serializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID:client_id,
     clientSecret:client_secret,
-    callbackURL: "https://nodejs-readdi.onrender.com/auth/google/home",
+    callbackURL: chkPortConnect,
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function (accessToken, refreshToken, profile, cb) {
@@ -191,8 +192,10 @@ function notUser(input){
 
 //default user login
 app.get('/',(req,res)=>{
-    ipConnect = req.ip
-    console.log(ipConnect)
+    if(port !== 3000){
+        chkPortConnect = 'https://nodejs-readdi.onrender.com/auth/google/home'
+    }else{chkPortConnect = 'http://localhost:3000/auth/google/home'}
+    console.log(`use url : ${chkPortConnect}`)
     let user
     if(req.isAuthenticated()){
         user = req.user || req.profile

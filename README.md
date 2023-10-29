@@ -1,5 +1,5 @@
 # [Read-di Web Application พัฒนาด้วย Node js](https://nodejs-readdi.onrender.com)
-[Go to website](https://nodejs-readdi.onrender.com){:target="_blank" rel="noopener"}
+[Go to website](https://nodejs-readdi.onrender.com)
 **A website application developed with Node.js with the following features.**
  - Login & Logout
  - Google Login
@@ -23,7 +23,7 @@ npm start
 ```
 
 ## Admin
-[Admin page](https://nodejs-readdi.onrender.com/admin){:target="_blank" rel="noopener"}
+[Admin page](https://nodejs-readdi.onrender.com/admin)
 ```bash
 username : admin
 password : 0000

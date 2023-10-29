@@ -1,6 +1,5 @@
 # [Read-di Web Application พัฒนาด้วย Node js](https://nodejs-readdi.onrender.com)
 [Go to website](https://nodejs-readdi.onrender.com)
-<a href="http://google.com/" target="_blank">Hello, google!</a>
 **A website application developed with Node.js with the following features.**
  - Login & Logout
  - Google Login

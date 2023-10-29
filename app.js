@@ -9,6 +9,7 @@ const findOrCreate = require('mongoose-findorcreate')
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const fs = require('fs');
+const { url } = require('inspector');
 const key = 'fso324ds@fdsf!fczvzsa';
 let genKey = '';
 let imgArr = [];
@@ -39,7 +40,11 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-mongoose.connect('mongodb://127.0.0.1:27017/read_di?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.0.1',{
+// mongoose.connect('mongodb://127.0.0.1:27017/read_di?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.0.1',{
+//     useNewUrlParser:true,
+//     useUnifiedTopology:true
+// });
+mongoose.connect('mongodb+srv://admin:admin1234@cluster0.yxbcpek.mongodb.net/read_di?retryWrites=true&w=majority',{
     useNewUrlParser:true,
     useUnifiedTopology:true
 });
@@ -81,12 +86,7 @@ passport.serializeUser(function(user, done) {
             done(err, null)
         })
 });
-// passport.serializeUser(User.serializeUser((user,done)=>{
-//     done(null,user)
-// }));
-// passport.deserializeUser(User.deserializeUser((user,done)=>{
-//     done(null,user)
-// }));
+
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
@@ -123,8 +123,6 @@ passport.use(new GoogleStrategy({
         })
   }
 ));
-
-
 
 function getDate() {
     const d = new Date();
@@ -174,14 +172,41 @@ function formatNumber(number){
     return number.toLocaleString('en-US')
 }
 
+function notUser(input){
+    if(input){
+        return `/`
+    }else{
+        return `/login`
+    }
+
+}
+
 //default user login
 app.get('/',(req,res)=>{
+    let user
     if(req.isAuthenticated()){
-         res.redirect('/home');
+        user = req.user || req.profile
+        //  res.redirect('/home');
     }else{
-         res.redirect('/login');
+        user = 'NotLogin'
     }
-    
+    console.log(user)
+    Product.find()
+        .then(data=>{
+            // console.log(data)
+            let doc = []
+            data.forEach(d=>{
+                const newDoc = {
+                    name:d.name,
+                    price:formatNumber(+d.price),
+                    category:d.category,
+                    image:d.image
+                }
+                doc.push(newDoc)
+            })
+            // console.log(doc)
+            res.render('home',{doc:doc,user:user})
+        })
 });
 
 //homepage
@@ -282,7 +307,7 @@ app.get('/auth/google/home',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect('/home');
+    res.redirect('/');
   });
 
 
@@ -292,10 +317,6 @@ app.post('/update/product',upload.single('newImage'),(req,res)=>{
     if(req.file){
         img = req.file.filename
     }else{img = image}
-    // imgArr.push(img)
-    // console.log(imgArr)
-    // fs.rename(`/uploads/${imgArr[0]}`,`/uploads/${imgArr[1]}`,(err)=>{
-        
     Product.findByIdAndUpdate(id,{
         name:name,
         price:price,
@@ -307,9 +328,6 @@ app.post('/update/product',upload.single('newImage'),(req,res)=>{
         res.redirect('/admin')
     }).catch(err=>console.log(err))
 });
-    // console.log(req.body.name)
-    // console.log(`new img : ${req.file.filename}`)
-// })
 
 //update product
 app.post('/update',(req,res)=>{
@@ -348,10 +366,17 @@ app.post('/login',(req,res)=>{
     req.logIn(user,(err)=>{
         if(err){
             console.log(err)
-            return res.redirect('/login')
+            req.flash('error', 'Invalid username or password');
+            return res.render('login')
         }
-        passport.authenticate('local')(req,res,()=>{
-        return res.redirect('/')
+        console.log(user)
+        passport.authenticate('local',{
+            successRedirect:"/",
+            failureRedirect:'/login',
+            failureFlash:true
+    })(req,res,()=>{
+        let url = notUser(false)
+        return res.redirect(url)
         })
     })
 })

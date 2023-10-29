@@ -23,18 +23,46 @@
             style="color: #000000;"></i></button>
       </form>
       <div class="d-flex align-items-center">
-        <a class="text-reset me-3" href="#">
+        <!-- <a class="text-reset me-3" href="#">
           <i class="fas fa-shopping-cart"></i>
         </a>
         <a href="#" class="nav-link ms-3">Product</a>
-        <a href="#" class="nav-link ms-3 me-4">Contact</a>
+        <a href="#" class="nav-link ms-3 me-2">Contact</a> -->
         <div class="dropdown" popper="static">
-          <a class="d-flex align-items-center btn" href="#" role="button" id="navbarDropdown" data-bs-toggle="dropdown"
+          
+          <%if(user !== 'NotLogin'){%>
+            <a class="d-flex align-items-center btn" href="#" role="button" id="navbarDropdown" data-bs-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
-            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25"
+            <img src="/image/user_icon.png" class="rounded-circle" height="25"
               alt="Black and White Portrait of a Man" loading="lazy" />
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="navbarDropdown">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item" href="#">My profile</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/admin">Admin</a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+                </hr>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/logout">Logout</a>
+              </li>
+            </ul>
+          <%}else{%>
+            <a class="d-flex align-items-center btn btn-outline-dark" href="/login">Login</a>
+            <!-- <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item" href="/admin">Admin</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/login">Login</a>
+              </li>
+            </ul> -->
+          <%}%>
+          <!-- <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="navbarDropdown">
             <li>
               <a class="dropdown-item" href="#">My profile</a>
             </li>
@@ -48,7 +76,7 @@
             <li>
               <a class="dropdown-item" href="/logout">Logout</a>
             </li>
-          </ul>
+          </ul> -->
         </div>
       </div>
     </div>
